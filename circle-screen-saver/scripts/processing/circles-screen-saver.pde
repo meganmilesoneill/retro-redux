@@ -73,7 +73,7 @@ void draw(){
     } else {
         if(startingSatOffset >= maxSaturation){
             startingSatDecreasing = true;
-            if(startingHueOffset == maxHue - 1) startingSatOffset = 0; else startingHueOffset++;
+            if(startingHueOffset == maxHue - 1) startingHueOffset = 0; else startingHueOffset++;
         } else {
             startingSatOffset+=1;
         }
