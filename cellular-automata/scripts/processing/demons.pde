@@ -53,25 +53,21 @@ void draw(){
             int north = (r == 0) ? maxSize - 1 : (r - 1);
             if(rows[north][c] == consumeValue) {
                 calcRows[north][c] = currentValue;
-                //calcRows[r][c] = consumeValue;
             }
             //check west neighbor
             int west = (c == 0) ? maxSize - 1 : (c - 1);
             if(rows[r][west] == consumeValue){
                 calcRows[r][west] = currentValue;
-                //calcRows[r][c] = consumeValue;
             }
             //check south neighbor
             int south = (r == maxSize - 1) ? 0 : (r + 1);
             if(rows[south][c] == consumeValue){
                 calcRows[south][c] = currentValue;
-                //calcRows[r][c] = consumeValue;
             }
             //check east neighbor
             int east = (c == maxSize - 1) ? 0 : (c + 1);
             if(rows[r][east] == consumeValue){
                 calcRows[r][east] = currentValue;
-                //calcRows[r][c] = consumeValue;
             }
         }
     }
