@@ -46,7 +46,7 @@ void draw(){
     hueOffset = startingHueOffset;
     satDecreasing = startingSatDecreasing;
 
-    for(radius = 1; radius <= maxRadius; radius++){
+    for(radius = maxRadius; radius >= 1; radius--){
         if(satDecreasing){
             if(satOffset <= minSaturation){
                 satDecreasing = false;
