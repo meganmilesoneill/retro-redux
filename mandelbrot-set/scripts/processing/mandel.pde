@@ -1,32 +1,36 @@
 //Globals
-int minRange = -2;
-int maxRange = 2;
-float[] bottomLeftValues = {minRange, maxRange};
-float gap = 0.0;
-int picSize = 400;
+float minX = -2, minY = -2, maxX = 2, maxY = 2;
+float sizeX, sizeY, gap;
+int picWidth, picHeight;
+
 int maxIterations = 100;
 
 void setup(){
+    sizeX = maxX - minX;
+    sizeY = maxY - minY;
+    picWidth = 400;
+    gap = sizeX / picWidth;
+    picHeight = sizeY / gap;
+
     frameRate(15);
     noLoop();
     background(#FFFFFF);
     colorMode(HSB, 100);
-    size(picSize, picSize);
-
-    gap = 4/picSize;
+    size(picWidth, picHeight);
+    //println("width: " + picWidth + ", height: " + picHeight + ", gap: " + gap);
 }
 
 float[] getComplexNumber(x, y){
     float[] complexNumber = new float[2];
-    complexNumber[0] = x*gap + bottomLeftValues[0];
-    complexNumber[1] = bottomLeftValues[1] - y*gap;
+    complexNumber[0] = x*gap + minX;
+    complexNumber[1] = y*gap + minY;
     return complexNumber;
 }
 
 float[] getPoint(r, i){
     float[] coords = new float[2];
-    coords[0] = int((r - bottomLeftValues[0]) / gap);
-    coords[1] = int((bottomLeftValues[1] - i) / gap);
+    coords[0] = int((r - minX) / gap);
+    coords[1] = picHeight - int((i - minY) / gap);
     return coords;
 }
 
@@ -38,8 +42,8 @@ float[] calculateZ(zValue, cValue){
 }
 
 void plotSet(){
-    for(int x = 0; x < picSize; x++){
-        for(int y = 0; y < picSize; y++){
+    for(int x = 0; x < picWidth; x++){
+        for(int y = 0; y < picHeight; y++){
 
             int iteration = 0;
             float[] cValue = getComplexNumber(x, y);
@@ -49,7 +53,7 @@ void plotSet(){
                 nextValue = calculateZ(nextValue, cValue);
 
                 //if nextValue is out of bounds, stop iterating and plot the point
-                if(nextValue[0] < minRange || nextValue[0] > maxRange || nextValue[1] < minRange || nextValue[1] > maxRange){
+                if(nextValue[0] < minX || nextValue[0] > maxX || nextValue[1] < minY || nextValue[1] > maxY){
                     break;
                 }
             }
@@ -66,7 +70,7 @@ void plotSet(){
 void plotIterations(cValue){
     float[] nextValue = {0, 0};
     float[] lastValue = {0, 0};
-    println("zValue: (" + nextValue[0] + ", " + nextValue[1] + "), cValue: (" + cValue[0] + ", " + cValue[1] + ")");
+    //println("zValue: (" + nextValue[0] + ", " + nextValue[1] + "), cValue: (" + cValue[0] + ", " + cValue[1] + ")");
     for (int iteration = 0; iteration < maxIterations; iteration++){
         lastValue = nextValue;
         nextValue = calculateZ(nextValue, cValue);
