@@ -3,21 +3,18 @@ float minX = -2, minY = -2, maxX = 2, maxY = 2;
 float sizeX, sizeY, gap;
 int picWidth, picHeight;
 
-int maxIterations = 100;
+int maxIterations = 200;
+
+//mouse variables
+float startX, startY, currentX, currentY;
+boolean mouseBeingDragged = false;
+boolean setRendered = false;
 
 void setup(){
-    sizeX = maxX - minX;
-    sizeY = maxY - minY;
-    picWidth = 400;
-    gap = sizeX / picWidth;
-    picHeight = sizeY / gap;
-
+    size(400, 400);
     frameRate(15);
-    noLoop();
     background(#FFFFFF);
-    colorMode(HSB, 100);
-    size(picWidth, picHeight);
-    //println("width: " + picWidth + ", height: " + picHeight + ", gap: " + gap);
+    colorMode(HSB, 255);
 }
 
 float[] getComplexNumber(x, y){
@@ -47,20 +44,25 @@ void plotSet(){
 
             int iteration = 0;
             float[] cValue = getComplexNumber(x, y);
+            if(x == 100 && y == 100){
+                println("cValue: (" + cValue[0] + ", " + cValue[1] + ")");
+            }
             float[] nextValue = {0, 0};
 
             for(iteration = 0; iteration < maxIterations; iteration++){
                 nextValue = calculateZ(nextValue, cValue);
 
                 //if nextValue is out of bounds, stop iterating and plot the point
-                if(nextValue[0] < minX || nextValue[0] > maxX || nextValue[1] < minY || nextValue[1] > maxY){
+                if(nextValue[0] < -2 || nextValue[0] > 2 || nextValue[1] < -2 || nextValue[1] > 2){
                     break;
                 }
             }
             if(iteration == maxIterations){
-                iteration = 0;
+                stroke(0, 0, 0);
             }
-            stroke(iteration, 150, 100);
+            else{
+                stroke(int(iteration - 1), 255, 255);
+            }
             point(x, y);
         }
     }
@@ -70,7 +72,6 @@ void plotSet(){
 void plotIterations(cValue){
     float[] nextValue = {0, 0};
     float[] lastValue = {0, 0};
-    //println("zValue: (" + nextValue[0] + ", " + nextValue[1] + "), cValue: (" + cValue[0] + ", " + cValue[1] + ")");
     for (int iteration = 0; iteration < maxIterations; iteration++){
         lastValue = nextValue;
         nextValue = calculateZ(nextValue, cValue);
@@ -81,12 +82,49 @@ void plotIterations(cValue){
     }
 }
 
+void mousePressed(){
+    loadPixels();
+    startX = mouseX;
+    startY = mouseY;
+}
+void mouseDragged(){
+    currentX = mouseX;
+    currentY = mouseY;
+    mouseBeingDragged = true;
+}
+void mouseReleased(){
+    mouseBeingDragged = false;
+    setRendered = false;
+    float startComplex = getComplexNumber(startX, currentY);
+    float endComplex = getComplexNumber(currentX, startY);
+    minX = startComplex[0];
+    minY = endComplex[1];
+    maxX = endComplex[0];
+    maxY = startComplex[1];
+}
+
 void draw(){
-    /*
-    stroke(#000000);
-    strokeWeight(3);
-    float[] testValue = {0.5, 0.5};
-    plotIterations(testValue);
-    */
-    plotSet();
+    if(!setRendered){
+        sizeX = maxX - minX;
+        sizeY = maxY - minY;
+        picWidth = 400;
+        gap = sizeX / picWidth;
+        picHeight = sizeY / gap;
+        plotSet();
+        setRendered = true;
+    }
+    if(mouseBeingDragged){
+        //background(140);
+        updatePixels();
+        fill(100, 100, 100, 50);
+        line(startX, startY, currentX, startY);
+        line(startX, startY, startX, currentY);
+        line(currentX, startY, currentX, currentY);
+        line(startX, currentY, currentX, currentY);
+        rect(startX, startY, (currentX-startX), (currentY-startY));
+    }
+    else{
+        currentX = mouseX;
+        currentY = mouseY;
+    }
 }
